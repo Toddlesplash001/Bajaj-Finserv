@@ -69,20 +69,20 @@ def get_qa_chain():
     )
 
 # --- Objection detection using regex ---
-def detect_objection(text):
-    objection_patterns = [
-        r"too expensive", r"not interested", r"already have", r"need to discuss", r"maybe later",
-        r"not the right time", r"no budget", r"don’t trust", r"prefer someone else", r"have to think"
-    ]
-    for pattern in objection_patterns:
-        if re.search(pattern, text.lower()):
-            return True
-    return False
+# def detect_objection(text):
+#     objection_patterns = [
+#         r"too expensive", r"not interested", r"already have", r"need to discuss", r"maybe later",
+#         r"not the right time", r"no budget", r"don’t trust", r"prefer someone else", r"have to think"
+#     ]
+#     for pattern in objection_patterns:
+#         if re.search(pattern, text.lower()):
+#             return True
+#     return False
 
-# --- Block off-topic queries ---
-def is_off_topic(query):
-    off_topic_keywords = ["weather", "sports", "politics", "movies", "actor", "game", "instagram", "twitter","country","political issue"]
-    return any(keyword in query.lower() for keyword in off_topic_keywords)
+# # --- Block off-topic queries ---
+# def is_off_topic(query):
+#     off_topic_keywords = ["weather", "sports", "politics", "movies", "actor", "game", "instagram", "twitter","country","political issue"]
+#     return any(keyword in query.lower() for keyword in off_topic_keywords)
 
 # --- Log chats ---
 def log_chat(user_q, bot_a):
@@ -112,21 +112,21 @@ if st.session_state.vectorstore:
 
     user_input = st.chat_input("💬 Ask something about your PDFs...")
     if user_input:
-        st.chat_message("user").markdown(user_input)
+        # st.chat_message("user").markdown(user_input)
+        response = qa.run(user_input)
+        # # --- Handle off-topic ---
+        # if is_off_topic(user_input):
+        #     response = "🚫 That question seems off-topic. Please ask something related to the uploaded PDFs."
+        # else:
+        #     response = qa.run(user_input)
 
-        # --- Handle off-topic ---
-        if is_off_topic(user_input):
-            response = "🚫 That question seems off-topic. Please ask something related to the uploaded PDFs."
-        else:
-            response = qa.run(user_input)
-
-            # --- Objection Detection ---
-            if detect_objection(user_input):
-                response += "\n\n⚠️ Detected a potential objection. You might want to address the customer's concern!"
+        #     # --- Objection Detection ---
+        #     if detect_objection(user_input):
+        #         response += "\n\n⚠️ Detected a potential objection. You might want to address the customer's concern!"
 
         # Log and display
         log_chat(user_input, response)
-        st.chat_message("assistant").markdown(response)
+        # st.chat_message("assistant").markdown(response)
         st.session_state.chat_history.append((user_input, response))
 
     # Display past chat history
